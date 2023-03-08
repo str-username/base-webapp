@@ -1,0 +1,23 @@
+{{- if .Values.app.publish }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "_helpers.ingress.name" . }}
+  namespace: {{ .Values.app.env }}
+  annotations:
+  {{- with .Values.traefik.annotations }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.app.domain }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ include "_helpers.service.name" . }}
+                port:
+                  name: http
+            pathType: Prefix
+            path: /
+{{- end }}

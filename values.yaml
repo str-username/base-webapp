@@ -1,0 +1,35 @@
+app:
+  env: dev-1
+  domain: example.com
+  publish: true
+
+  deployment:
+    create: true
+    customize: false
+    replicas: 1
+
+    container:
+      name: ""
+      args: []
+      command: []
+      env: []
+      envFrom: []
+      image: ""
+      imagePullPolicy: ""
+      livenessProbe: []
+      readinessProbe: []
+      ports: []
+      resources: []
+      securityContext: []
+      startupProbe: []
+      volumeMounts: []
+
+    containers: []
+nameOverride: ""
+fullnameOverride: ""
+traefik:
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.frontend.passHostHeader: "true"
+    traefik.backend.loadbalancer.sticky: "false"
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd

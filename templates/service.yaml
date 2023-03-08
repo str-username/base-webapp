@@ -1,0 +1,18 @@
+{{- if .Values.app.publish }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "_helpers.service.name" . }}
+  namespace: {{ .Values.app.env }}
+  labels:
+    {{ include "_helpers.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{ include "_helpers.selectorLabels" . | nindent 4 }}
+{{- end }}

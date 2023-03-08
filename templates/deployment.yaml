@@ -1,0 +1,85 @@
+{{- if .Values.app.deployment.create }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "_helpers.fullname" . }}
+  namespace: {{ .Values.app.env }}
+  labels:
+    {{- include "_helpers.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "_helpers.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "_helpers.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      # Custom spec, its can used for run multiple containers
+      {{- if .Values.app.deployment.customize }}
+      {{- with .Values.app.deployment.containers }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- end }}
+      # Default spec, its can be used for run default single container
+      {{- if not .Values.app.deployment.customize }}
+        - name: {{ include "_helpers.fullname" . }}-container
+          args:
+          {{- with .Values.app.deployment.container.args }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+          {{- with .Values.app.deployment.container.command }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+          {{- with .Values.app.deployment.container.env }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+          {{- with .Values.app.deployment.container.envFrom }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: {{ .Values.app.deployment.container.image }}
+          imagePullPolicy: {{ .Values.app.deployment.container.imagePullPolicy }}
+          livenessProbe:
+          {{- with .Values.app.deployment.container.livenessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+          {{- with .Values.app.deployment.container.readinessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+          {{- with .Values.app.deployment.container.ports }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+          {{- with .Values.app.deployment.container.resources }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+          {{- with .Values.app.deployment.container.securityContext }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          startupProbe:
+          {{- with .Values.app.deployment.container.startupProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+          {{- with .Values.app.deployment.container.volumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+      nodeSelector:
+      {{- with .Values.app.deployment.nodeSelector }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      tolerations:
+      {{- with .Values.app.deployment.tolerations }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}
